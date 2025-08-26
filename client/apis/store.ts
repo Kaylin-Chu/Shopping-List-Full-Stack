@@ -1,4 +1,9 @@
 import request from "superagent"
-import { Store, StoreData } from "../../models/shoppingList"
+import { Store } from "../../models/shoppingList"
 
-// const rootUrl = 
+const rootUrl = new URL(`api/vi`, document.baseURI)
+
+export async function getStore() {
+  const response = await request.get(`${rootUrl}/store`)
+  return response.body as Store[]
+}
