@@ -19,3 +19,7 @@ export async function addStock(newStock: StoreData): Promise<Store[]> {
 })
   .returning(['*'])
 }
+
+export async function deleteStock(id: number) {
+  return db('store').where({ id }).del()
+}

@@ -24,4 +24,16 @@ router.post('/', async (req, res) => {
   }
 })
 
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id)
+    const updatedStore = await db.deleteStock(id)
+    res.status(204)
+    res.json(updatedStore)
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Could not find shop data' })
+  }
+})
 export default router
