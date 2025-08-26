@@ -84,9 +84,15 @@ export function AddItemForm() {
     <br/>
     <p>For Office Use Only</p>
     <form onSubmit={handleSubmit}>
+      <label> Item:
       <input name="itemName" placeholder="Item"/>
+      </label>
+      <label> Price:
       <input name="price" placeholder="$"/>
+      </label>
+      <label> Quantity:
       <input name="stockQuantity" placeholder="Quantity"/>
+      </label>
       <button type="submit">Add Item</button>
     </form>
     </>
