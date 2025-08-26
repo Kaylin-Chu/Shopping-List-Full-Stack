@@ -1,7 +1,11 @@
-import { ShoppingList } from '../models/store.js';
+import {ShoppingList} from '../../models/shoppingList.ts';
 import db from './connection.js';
 
-export async function getShopping() {
+export async function getStore(): Promise<ShoppingList[]> {
   return db('store')
-  .select('*');
+  .select(
+    'id',
+    'item_name as itemName',
+    'price',
+    'stock_quantity as stockQuantity');
 }

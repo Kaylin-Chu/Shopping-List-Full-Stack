@@ -1,6 +1,12 @@
-interface ShoppingList {
+export interface ShoppingList {
+  itemName: string;
+  quantity: number;
+  isPurchased: boolean
+}
+
+export interface Store{
   id: number;
-  item_name: string;
+  itemName: string;
   price: number;
-  stock_quantity: number;
+  stockQuantity: number;
 }
