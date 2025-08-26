@@ -1,9 +1,19 @@
 import request from "superagent"
-import { Store } from "../../models/shoppingList"
+import { Store, StoreData } from "../../models/shoppingList"
 
-const rootUrl = new URL(`api/vi`, document.baseURI)
+const rootURL = new URL(`/api/v1`, document.baseURI)
 
 export async function getStore() {
-  const response = await request.get(`${rootUrl}/store`)
-  return response.body as Store[]
+  const response = await request.get(`${rootURL}/store`)
+  return response.body as StoreData[]
+}
+
+export async function addStock(newStock: Store) {
+  const result = await request.post(`${rootURL}/store`).send(newStock)
+  return result.body as Store[]
+}
+
+export async function deleteStock(id: number) {
+  await request.delete(`${rootURL}/store/${id}`)
+  return
 }

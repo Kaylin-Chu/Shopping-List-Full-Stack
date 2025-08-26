@@ -6,7 +6,7 @@ const router = express.Router()
 router.get('/', async (req, res) => {
   try {
     const store = await db.getStore()
-    res.json({store})
+    res.json(store)
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Could not find shop data' })

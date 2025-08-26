@@ -1,26 +1,31 @@
-// const store = [
-//     {id: 1, itemName: 'Apples', price: 0.50, stockQuantity: 100},
-//     {id: 2, itemName: 'Bread', price: 1.50, stockQuantity: 50},
-//     {id: 3, itemName: 'Milk', price: 1.00, stockQuantity: 75}
-// ]
+import { deleteStock, addStock, getStore } from "../apis/store.ts"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { StoreData } from "../../models/shoppingList"
 
-import { getStore } from "../apis/store"
-import { useQuery } from "@tanstack/react-query"
 
-// async function useStore() {
-//   const query = useQuery({queryKey: ['item'], queryFn: getStore})
-// }
-
-function Store() {
+function DelStore() {
   const {
     data: store, 
     isPending, 
     isError,
-  } = useQuery({
+  } = useQuery <StoreData[]> ({
     queryKey: ['store'],
      queryFn: getStore
     })
+  
+  const queryClient = useQueryClient()
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteStock,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['store'] })
+    },
+  })
+
+  const deleteItem = async (id: number) => {
+    await deleteMutation.mutate(id)
+  }
+  
   if (isPending) {
     return <p>loading...</p>
   }
@@ -33,10 +38,57 @@ function Store() {
     <>
         <h1> Store Stock: </h1>
         <ul>
-          {store.map((stock) => (<li key={stock.itemName} > {stock.itemName}</li>))}
+          {store.map((item) => (
+            <li key={item.id}> 
+            #{item.id} {item.itemName}, {item.stockQuantity} in stock, only ${item.price} each!!
+            <br/>
+            <button onClick={() => deleteItem(item.id)}> Purchase all {item.stockQuantity} </button>
+            </li>))}
         </ul>
     </>
   )
 }
 
-export default Store
+export default DelStore
+
+export function AddItemForm() {
+  const queryClient = useQueryClient()
+  const addMutation = useMutation({
+    mutationFn: addStock,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['store'] })
+    },
+  })
+
+  interface NewStock {
+    itemName: string
+    price: number
+    stockQuantity: number
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement)
+    const newStock: NewStock = {
+      itemName: formData.get('itemName') as string,
+      price: Number(formData.get('price')),
+      stockQuantity: Number(formData.get('stockQuantity')),
+    }
+    await addMutation.mutate(newStock)
+  }
+
+  return (
+    <>
+    <br/>
+    <hr/>
+    <br/>
+    <p>For Office Use Only</p>
+    <form onSubmit={handleSubmit}>
+      <input name="itemName" placeholder="Item"/>
+      <input name="price" placeholder="$"/>
+      <input name="stockQuantity" placeholder="Quantity"/>
+      <button type="submit">Add Item</button>
+    </form>
+    </>
+  )
+}
